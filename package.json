@@ -15,5 +15,9 @@
   "bugs": {
     "url": "https://github.com/ZinChen/durak-card-game/issues"
   },
-  "homepage": "https://github.com/ZinChen/durak-card-game#readme"
+  "homepage": "https://github.com/ZinChen/durak-card-game#readme",
+  "dependencies": {
+    "express": "^4.14.0",
+    "socket.io": "^1.4.8"
+  }
 }
