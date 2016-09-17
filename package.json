@@ -1,0 +1,19 @@
+{
+  "name": "durak-card-game",
+  "version": "1.0.0",
+  "description": "Simple card game up to 8 players",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ZinChen/durak-card-game.git"
+  },
+  "author": "Yuri Zinchenko <zinchen777@gmail.com>, Prohor Voloshenko",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ZinChen/durak-card-game/issues"
+  },
+  "homepage": "https://github.com/ZinChen/durak-card-game#readme"
+}
