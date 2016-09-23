@@ -6,6 +6,7 @@ var express = require('express'),
 app.use(express.static(path.join(__dirname,'public')));
 app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'html');
+app.set('views', path.join(__dirname,'public'));
 
 var server = require('http').createServer(app).listen(process.env.PORT || 8080),
     io = require('socket.io').listen(server);
