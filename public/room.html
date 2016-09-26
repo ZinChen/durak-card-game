@@ -4,7 +4,10 @@
 	<meta charset="UTF-8">
 	<title>Durak Card Game</title>
 	<script src="/socket.io/socket.io.js"></script>
-	<script src="app.js"></script>
+	<script>
+		var room = "<%- room -%>";
+	</script>
+	<script src="/app.js"></script>
 </head>
 <body>
 	room is <%- room -%>

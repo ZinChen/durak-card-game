@@ -14,4 +14,11 @@ exports.initGame = function(sio, socket) {
             socket.disconnect();
         }
     });
+
+    gameSocket.on('switchRoom', function(data) {
+        if (data.room) {
+            gameSocket.join(data.room);
+            console.log('room switched to: ' + data.room);
+        }
+    });
 };

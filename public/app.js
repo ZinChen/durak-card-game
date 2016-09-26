@@ -17,6 +17,8 @@ document.addEventListener("DOMContentLoaded", function() {
         },
 
         onConnected: function(data) {
+            IO.socket.emit('switchRoom', {room: room});
+            console.log(room);
             console.log(data.message);
         },
 
