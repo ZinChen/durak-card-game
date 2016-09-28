@@ -1,4 +1,5 @@
 var io,
+    _ = require('lodash'),
     id = 0,
     maxPlayerNum = 4;
 
@@ -7,7 +8,7 @@ exports.initGame = function(sio) {
 }
 
 exports.initConnection = function(socket) {
-    socket.id = id++;
+    socket.uid = id++;
 
     socket.emit('connected', {message: "You are connected!"});
     socket.on('message', function(data) {
@@ -26,10 +27,22 @@ exports.initConnection = function(socket) {
             socket.room = data.room;
             console.log('room switched to: ' + data.room);
         }
-            socket.ready = false;
-            players = io.sockets.adapter.rooms[socket.room].sockets;
-            console.log(players);
-            console.log(players.length);
+        socket.ready = false;
+
+        var userIds = io.sockets.adapter.rooms[socket.room].sockets;
+        var users = [];
+        for (var userId in userIds) {
+            var user = io.sockets.connected[userId];
+            users.push(user);
+        }
+
+        var players = _.filter(users, 'isPlayer');
+        if (players.length < maxPlayerNum) {
+            socket.isPlayer = true;
+        } else {
+            socket.isPlayer = false;
+        }
+        console.log(players.length);
     });
 
     socket.on('ready', function(ready) {
