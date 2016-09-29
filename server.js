@@ -1,5 +1,6 @@
 var express = require('express'),
     path = require('path'),
+    _ = require('lodash'),
     app = express(),
     durak = require('./durak.js');
 
@@ -16,6 +17,7 @@ app.get('/game/:room', function(req, res) {
     res.render('room', {room: room});
 });
 
-io.sockets.on('connection', function(socket) {
-    durak.initGame(io, socket);
+durak.initGame(io);
+io.on('connection', function(socket) {
+    durak.initConnection(socket);
 });

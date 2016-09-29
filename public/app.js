@@ -1,7 +1,10 @@
+var IO;
+
 document.addEventListener("DOMContentLoaded", function() {
     'use strict';
 
-    var IO = {
+    // var IO = {
+    IO = {
         init: function() {
             IO.socket = io.connect();
             IO.bindEvents();
