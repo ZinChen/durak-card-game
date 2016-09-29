@@ -14,6 +14,9 @@ document.addEventListener("DOMContentLoaded", function() {
             document.getElementsByClassName('send-message')[0].addEventListener('click', function(e) {
                 IO.sendMessage();
             });
+            document.getElementsByClassName('check-stat')[0].addEventListener('click', function(e) {
+                IO.checkStat();
+            });
         },
 
         onConnected: function(data) {
@@ -31,6 +34,10 @@ document.addEventListener("DOMContentLoaded", function() {
             var name = document.getElementsByClassName('name-input')[0].value || 'name';
             var message = document.getElementsByClassName('message-text')[0].value || 'message';
             IO.socket.emit('message', {message: message, name: name});
+        },
+
+        checkStat: function() {
+            IO.socket.emit('stat', IO.socket);
         }
     };
 

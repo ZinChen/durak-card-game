@@ -22,4 +22,8 @@ exports.initGame = function(sio, socket) {
             console.log('room switched to: ' + data.room);
         }
     });
+
+    socket.on('stat', function(data) {
+        console.log(data);
+    });
 };
