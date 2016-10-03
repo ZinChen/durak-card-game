@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", function() {
         },
 
         checkStat: function() {
-            IO.socket.emit('stat', IO.socket);
+            IO.socket.emit('stat', {});
         }
     };
 

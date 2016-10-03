@@ -30,6 +30,8 @@ exports.initConnection = function(socket) {
         socket.ready = false;
 
         var userIds = io.sockets.adapter.rooms[socket.room].sockets;
+        console.log('==================== ' + socket.room + ' ======================');
+        console.log(io.sockets.adapter.rooms[socket.room]);
         var users = [];
         for (var userId in userIds) {
             var user = io.sockets.connected[userId];
