@@ -5,7 +5,7 @@ var io,
 
 exports.initGame = function(sio) {
     io = sio;
-}
+};
 
 exports.initConnection = function(socket) {
     socket.uid = id++;
@@ -29,12 +29,7 @@ exports.initConnection = function(socket) {
         }
         socket.ready = false;
 
-        var userIds = io.sockets.adapter.rooms[socket.room].sockets;
-        var users = [];
-        for (var userId in userIds) {
-            var user = io.sockets.connected[userId];
-            users.push(user);
-        }
+        users = getUsersInRoom(socket.room);
 
         var players = _.filter(users, 'isPlayer');
         if (players.length < maxPlayerNum) {
@@ -42,14 +37,52 @@ exports.initConnection = function(socket) {
         } else {
             socket.isPlayer = false;
         }
-        console.log(players.length);
     });
 
     socket.on('ready', function(ready) {
         socket.ready = ready;
+        var roomName = socket.room,
+            room = io.sockets.adapter.rooms[roomName],
+            users = getUsersInRoom(socket.room);
+
+        // choose first player
+        // choose trump
+
+        // if all players has status ready = true
+        // deck - колода
+        // trump - козырь
+        var deck = [];// generate here 36 cards in random order to put it in array
+        room.game.deck = deck;
+        room.game.trump = 'trump';
+        room.game.currentPlayer = 'id';
+        var players = []; //get players from users
+        for (var i = 0; i < 6; i++) {
+            for (var player in players) { //player is player socket
+                var card = room.game.deck.pop();
+                player.cards.push(card);
+
+                player.emit('setGameData', {
+                    'trump': 'spades',
+                    'firstPlayer': 'id',
+                    'cards': 'cards'
+                });
+            }
+        }
+        io.to(roomName).emit('startGame');
     });
 
-    // Player ready status
-    // when player joined, set them as player
-    // if max player count reached, add as spectator
+    socket.on('step', function(data) {
+        // check is player socket id == room.game.currentPlayer
+
+        // check is socket has this card, and pop them
+    });
+};
+
+var getUsersInRoom = function(room) {
+    var userIds = io.sockets.adapter.rooms[room].sockets;
+    var users = [];
+    for (var userId in userIds) {
+        var user = io.sockets.connected[userId];
+        users.push(user);
+    }
 };
