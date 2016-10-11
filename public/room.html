@@ -1,28 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<title>Durak Card Game</title>
-	<script src="/socket.io/socket.io.js"></script>
-	<script>
-		var room = "<%- room -%>";
-	</script>
-	<script src="/app.js"></script>
+    <meta charset="UTF-8">
+    <title>Durak Card Game</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        var room = "<%- room -%>";
+    </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="/app.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Righteous" rel="stylesheet">
+    <link href="/style.css" rel="stylesheet">
 </head>
 <body>
-	room is <%- room -%>
-	<br>
-	Look at console.
-	<div class="control-panel">
-		<label> Enter your name
-			<input type="text" id="name-input" class="name-input">
-		</label>
-		<br>
-		<label for="message-text"> Enter message </label> <br>
-		<textarea name="" id="message-text" cols="30" rows="10" class="message-text"></textarea>
-		<button class="send-message">Send message</button>
-	</div>
-	<br>
-	<button class="check-stat">Check stat</button>
+    room is <%- room -%>
+    <br>
+    Look at console.
+    <div class="control-panel">
+        <label> Your name is <span id="name-input"></span></label>
+        <br>
+        <label for="message-text"> Enter message </label> <br>
+        <textarea name="" id="message-text" cols="30" rows="10" class="message-text"></textarea>
+        <button class="send-message">Send message</button>
+    </div>
+    <br>
+    <button class="check-stat">Check stat</button>
+
+    <div id="users">
+        Users in room:
+        <ul class="users"></ul>
+    </div>
+
+    <div id="layout-name">
+        <div id="frame">
+            <div id="frame2">
+                <h3>Please, input your name:</h3>
+                <input id="name" type="text"><button id="btn-name">Go in</button><button id="test">+</button>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

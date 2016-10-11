@@ -51,9 +51,33 @@ exports.initConnection = function(socket) {
         socket.ready = ready;
     });
 
-    socket.on('stat', function(data) {
-        console.log(data);
+    socket.on('setName', function(data) {
+        if (socket.data === undefined) socket.data = {};
+        socket.data.username = data;
+        socket.data.id = socket.id;
+        // var allUsers = socket.server.engine.clients;
+        // var allUsersId = [];
+        // for (v in allUsers) {
+        //     allUsersId.push(v);
+        // }
+        socket.emit('setName', data);
+        refreshNames();
+
     });
+
+    var refreshNames = function() {
+        var userIds = io.sockets.adapter.rooms[socket.room].sockets;
+        var users = [];
+        for (var userId in userIds) {
+            var user = io.sockets.connected[userId];
+            users.push(user);
+        }
+
+        var players = _.map(users, 'data.username');
+
+        socket.emit('refreshNames', players);
+        socket.broadcast.to(socket.room).emit('refreshNames', players);
+    };
 
     // Player ready status
     // when player joined, set them as player
