@@ -40,32 +40,44 @@ exports.initConnection = function(socket) {
     });
 
     socket.on('ready', function(ready) {
+        if (!socket.isPlayer) {
+            return;
+        }
         socket.ready = ready;
+        // console.log(ready);
+        // console.log(socket.isPlayer);
         var roomName = socket.room,
             room = io.sockets.adapter.rooms[roomName],
             users = getUsersInRoom(socket.room);
+        // if all players has status ready = true
 
+        // console.log(users);
+        var players = _.filter(users, 'isPlayer');
+        var readyPlayers = _.filter(users, {'ready': true});
+        if (players.length == readyPlayers.length) {
+            console.log('game will be started!');
+        }
         // choose first player
         // choose trump
 
-        // if all players has status ready = true
         // deck - колода
         // trump - козырь
         var deck = [];// generate here 36 cards in random order to put it in array
+        room.game = [];
         room.game.deck = deck;
         room.game.trump = 'trump';
         room.game.currentPlayer = 'id';
         var players = []; //get players from users
         for (var i = 0; i < 6; i++) {
             for (var player in players) { //player is player socket
-                var card = room.game.deck.pop();
-                player.cards.push(card);
+                // var card = room.game.deck.pop();
+                // player.cards.push(card);
 
-                player.emit('setGameData', {
-                    'trump': 'spades',
-                    'firstPlayer': 'id',
-                    'cards': 'cards'
-                });
+                // player.emit('setGameData', {
+                //     'trump': 'spades',
+                //     'firstPlayer': 'id',
+                //     'cards': 'cards'
+                // });
             }
         }
         io.to(roomName).emit('startGame');
@@ -85,4 +97,5 @@ var getUsersInRoom = function(room) {
         var user = io.sockets.connected[userId];
         users.push(user);
     }
+    return users;
 };

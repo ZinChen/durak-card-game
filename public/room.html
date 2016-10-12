@@ -4,6 +4,7 @@
 	<meta charset="UTF-8">
 	<title>Durak Card Game</title>
 	<script src="/socket.io/socket.io.js"></script>
+	<script src="/vendor/jquery-3.1.1.min.js"></script>
 	<script>
 		var room = "<%- room -%>";
 	</script>
@@ -21,6 +22,7 @@
 	<label for="message-text"> Enter message </label> <br>
 	<textarea name="" id="message-text" cols="30" rows="10" class="message-text"></textarea>
 	<button class="send-message">Send message</button>
+	<input type="checkbox" name="ready">
 	</div>
 </body>
 </html>

@@ -17,6 +17,10 @@ document.addEventListener("DOMContentLoaded", function() {
             document.getElementsByClassName('send-message')[0].addEventListener('click', function(e) {
                 IO.sendMessage();
             });
+            $('input[name="ready"').on('click', function(e) {
+                console.log(this.checked);
+                IO.socket.emit('ready', this.checked);
+            });
         },
 
         onConnected: function(data) {
