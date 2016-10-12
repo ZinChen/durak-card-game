@@ -62,7 +62,7 @@ exports.initConnection = function(socket) {
 
         // deck - колода
         // trump - козырь
-        var deck = [];// generate here 36 cards in random order to put it in array
+        var deck = generateCardDeck();// generate here 36 cards in random order
         room.game = [];
         room.game.deck = deck;
         room.game.trump = 'trump';
@@ -120,5 +120,34 @@ exports.initConnection = function(socket) {
             users.push(user);
         }
         return users;
+    };
+
+    var generateCardDeck = function() {
+        var names = ['6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+        var suits = ['Hearts','Diamonds','Spades','Clubs'];
+        var cards = [];
+
+        for (var suit in suits) {
+            for (var name in names) {
+                cards.push({
+                    name: name,
+                    suit: suit
+                });
+            }
+        }
+
+        var currentIndex = cards.length, temporaryValue, randomIndex;
+
+        // While there remain elements to shuffle...
+        while (0 !== currentIndex) {
+            // Pick a remaining element...
+            randomIndex = Math.floor(Math.random() * currentIndex);
+            currentIndex -= 1;
+            // And swap it with the current element.
+            temporaryValue = cards[currentIndex];
+            cards[currentIndex] = cards[randomIndex];
+            cards[randomIndex] = temporaryValue;
+        }
+        return cards;
     };
 };
