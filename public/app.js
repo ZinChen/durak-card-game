@@ -16,7 +16,10 @@ document.addEventListener("DOMContentLoaded", function() {
             IO.socket.on('message', IO.onMessage);
             IO.socket.on('setName', IO.onSetName);
             IO.socket.on('refreshNames', IO.onRefreshNames);
-            IO.socket.on('setGameData', IO.onSetGameData);
+            IO.socket.on('setCards', IO.onSetCards);
+            IO.socket.on('gameStarted', IO.onGameStarted);
+            IO.socket.on('countdownStarted', IO.onCountdownStarted);
+            IO.socket.on('countdownCanceled', IO.onCountdownCanceled);
 
             document.getElementsByClassName('send-message')[0].addEventListener('click', function(e) {
                 IO.sendMessage();
@@ -63,8 +66,21 @@ document.addEventListener("DOMContentLoaded", function() {
             $userList.html(dataLi);
         },
 
-        onSetGameData: function(data) {
+        onGameStarted: function(data) {
+            console.log('game started!');
             console.log(data);
+        },
+
+        onSetCards: function(data) {
+            console.log(data);
+        },
+
+        onCountdownStarted: function(data) {
+            console.log('onCountdownStarted');
+        },
+
+        onCountdownCanceled: function(data) {
+            console.log('onCountdownCanceled');
         },
 //============================ END ON ==============================\\
 

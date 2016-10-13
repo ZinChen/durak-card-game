@@ -40,6 +40,8 @@ exports.initConnection = function(socket) {
         socket.ready = false;
 
         users = getUsersInRoom(socket.room);
+        room = io.sockets.adapter.rooms[socket.room],
+        room.game = [];
 
         var players = _.filter(users, 'isPlayer');
         if (players.length < maxPlayerNum) {
@@ -61,42 +63,18 @@ exports.initConnection = function(socket) {
             readyPlayers = _.filter(users, {'ready': true});
 
         if (players.length == readyPlayers.length) {
-            console.log('game will be started!');
+            console.log('countdown started!');
+            room.game.countdown = true;
+            io.to(roomName).emit('countdownStarted');
+            setTimeout(function() {
+                afterCountdown(roomName);
+            }, 10000);
+        } else {
+            if (room.game.countdown) {
+                room.game.countdown = false;
+                io.to(roomName).emit('countdownCanceled');
+            }
         }
-        else {
-            return;
-        }
-
-        var deck = generateCardDeck(),
-            playerIds = _.map(players, 'id'),
-            randomIndex = Math.floor(Math.random()*playerIds.length),
-            startPlayerId = playerIds[randomIndex],
-            prevPlayerIndex = randomIndex ? randomIndex - 1 : playerIds.length - 1,
-            prevPlayerId = playerIds[prevPlayerIndex];
-        room.game = [];
-        room.game.deck = deck;
-        room.game.trump = deck[0].suit;
-        room.game.currentPlayer = startPlayerId;
-        room.game.prevPlayer = prevPlayerId;
-        players.forEach(function(p, i, players) {
-            players[i].cards = [];
-        });
-        for (var i = 0; i < 6; i++) {
-            players.forEach(function(p, i, players) {
-                var card = room.game.deck.pop();
-                players[i].cards.push(card);
-            });
-        }
-        players.forEach(function(p, i, players) {
-            var player = players[i];
-            player.emit('setGameData', {
-                'trump': room.game.trump,
-                'firstPlayer': startPlayerId,
-                'prevPlayer': prevPlayerId,
-                'cards': player.cards
-            });
-        });
-        // io.to(roomName).emit('startGame');
     });
 
     socket.on('step', function(data) {
@@ -118,6 +96,59 @@ exports.initConnection = function(socket) {
         refreshNames();
 
     });
+
+    var afterCountdown = function(roomName) {
+        var room = io.sockets.adapter.rooms[roomName],
+            users = getUsersInRoom(roomName),
+            players = _.filter(users, 'isPlayer'),
+            readyPlayers = _.filter(users, {'ready': true});
+
+        if (!room.game.countdown || room.game.gamestarted ||
+            players.length != readyPlayers.length
+        )
+        {
+            console.log('countdown');
+            console.log(room.game.countdown);
+            console.log('gamestarted');
+            console.log(room.game.gamestarted);
+            return;
+        }
+
+        console.log('game will be started!');
+
+        var deck = generateCardDeck(),
+            playerIds = _.map(players, 'id'),
+            randomIndex = Math.floor(Math.random()*playerIds.length),
+            startPlayerId = playerIds[randomIndex],
+            prevPlayerIndex = randomIndex ? randomIndex - 1 : playerIds.length - 1,
+            prevPlayerId = playerIds[prevPlayerIndex];
+
+        room.game.gamestarted = true;
+        room.game.deck = deck;
+        room.game.trump = deck[0];
+        room.game.currentPlayer = startPlayerId;
+        room.game.prevPlayer = prevPlayerId;
+        players.forEach(function(p, i, players) {
+            players[i].cards = [];
+        });
+        for (var i = 0; i < 6; i++) {
+            players.forEach(function(p, i, players) {
+                var card = room.game.deck.pop();
+                players[i].cards.push(card);
+            });
+        }
+        io.to(roomName).emit('gameStarted', {
+            trump: room.game.trump,
+            firstPlayer: startPlayerId,
+            prevPlayer: prevPlayerId,
+        });
+        players.forEach(function(p, i, players) {
+            var player = players[i];
+            player.emit('setCards', {
+                cards: player.cards
+            });
+        });
+    }
 
     var refreshNames = function() {
         var userIds = io.sockets.adapter.rooms[socket.room].sockets;
@@ -151,8 +182,6 @@ exports.initConnection = function(socket) {
                 });
             });
         });
-
-        console.log(cards);
 
         var currentIndex = cards.length, temporaryValue, randomIndex;
 
