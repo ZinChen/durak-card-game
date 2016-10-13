@@ -16,6 +16,7 @@ document.addEventListener("DOMContentLoaded", function() {
             IO.socket.on('message', IO.onMessage);
             IO.socket.on('setName', IO.onSetName);
             IO.socket.on('refreshNames', IO.onRefreshNames);
+            IO.socket.on('setGameData', IO.onSetGameData);
 
             document.getElementsByClassName('send-message')[0].addEventListener('click', function(e) {
                 IO.sendMessage();
@@ -60,6 +61,10 @@ document.addEventListener("DOMContentLoaded", function() {
             });
 
             $userList.html(dataLi);
+        },
+
+        onSetGameData: function(data) {
+            console.log(data);
         },
 //============================ END ON ==============================\\
 

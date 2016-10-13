@@ -1,3 +1,13 @@
+// Deck - Колода
+// Trump - Козырь
+// Hearts - Черви
+// Diamonds - Бубны
+// Spades - Пики
+// Clubs - Крести
+// Ace - Туз
+// King - Король
+// Queen - Дама
+// Jack - Валет
 var io,
     _ = require('lodash'),
     id = 0,
@@ -44,43 +54,49 @@ exports.initConnection = function(socket) {
             return;
         }
         socket.ready = ready;
-        // console.log(ready);
-        // console.log(socket.isPlayer);
         var roomName = socket.room,
             room = io.sockets.adapter.rooms[roomName],
-            users = getUsersInRoom(socket.room);
-        // if all players has status ready = true
+            users = getUsersInRoom(socket.room),
+            players = _.filter(users, 'isPlayer'),
+            readyPlayers = _.filter(users, {'ready': true});
 
-        // console.log(users);
-        var players = _.filter(users, 'isPlayer');
-        var readyPlayers = _.filter(users, {'ready': true});
         if (players.length == readyPlayers.length) {
             console.log('game will be started!');
         }
-        // choose first player
-        // choose trump
+        else {
+            return;
+        }
 
-        // deck - колода
-        // trump - козырь
-        var deck = generateCardDeck();// generate here 36 cards in random order
+        var deck = generateCardDeck(),
+            playerIds = _.map(players, 'id'),
+            randomIndex = Math.floor(Math.random()*playerIds.length),
+            startPlayerId = playerIds[randomIndex],
+            prevPlayerIndex = randomIndex ? randomIndex - 1 : playerIds.length - 1,
+            prevPlayerId = playerIds[prevPlayerIndex];
         room.game = [];
         room.game.deck = deck;
-        room.game.trump = 'trump';
-        room.game.currentPlayer = 'id';
-        var players = []; //get players from users
+        room.game.trump = deck[0].suit;
+        room.game.currentPlayer = startPlayerId;
+        room.game.prevPlayer = prevPlayerId;
+        players.forEach(function(p, i, players) {
+            players[i].cards = [];
+        });
         for (var i = 0; i < 6; i++) {
-            for (var player in players) { //player is player socket
-                // var card = room.game.deck.pop();
-                // player.cards.push(card);
-
-                // player.emit('setGameData', {
-                //     'trump': 'spades',
-                //     'firstPlayer': 'id',
-                //     'cards': 'cards'
-                // });
-            }
+            players.forEach(function(p, i, players) {
+                var card = room.game.deck.pop();
+                players[i].cards.push(card);
+            });
         }
-        io.to(roomName).emit('startGame');
+        players.forEach(function(p, i, players) {
+            var player = players[i];
+            player.emit('setGameData', {
+                'trump': room.game.trump,
+                'firstPlayer': startPlayerId,
+                'prevPlayer': prevPlayerId,
+                'cards': player.cards
+            });
+        });
+        // io.to(roomName).emit('startGame');
     });
 
     socket.on('step', function(data) {
@@ -127,14 +143,16 @@ exports.initConnection = function(socket) {
         var suits = ['Hearts','Diamonds','Spades','Clubs'];
         var cards = [];
 
-        for (var suit in suits) {
-            for (var name in names) {
+        suits.forEach(function(suit) {
+            names.forEach(function(name) {
                 cards.push({
                     name: name,
                     suit: suit
                 });
-            }
-        }
+            });
+        });
+
+        console.log(cards);
 
         var currentIndex = cards.length, temporaryValue, randomIndex;
 
