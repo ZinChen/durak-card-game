@@ -11,7 +11,8 @@
 var io,
     _ = require('lodash'),
     id = 0,
-    maxPlayerNum = 4;
+    maxPlayerNum = 4,
+    gamesteps = ['attack', 'defence', 'abandon', 'beaten'];
 
 exports.initGame = function(sio) {
     io = sio;
@@ -64,11 +65,15 @@ exports.initConnection = function(socket) {
 
         if (players.length == readyPlayers.length) {
             console.log('countdown started!');
+            room.game.countdownTime = 10;
             room.game.countdown = true;
-            io.to(roomName).emit('countdownStarted');
+
+            io.to(roomName).emit('countdownStarted', {
+                time: room.game.countdownTime
+            });
             setTimeout(function() {
                 afterCountdown(roomName);
-            }, 10000);
+            }, room.game.countdownTime * 1000);
         } else {
             if (room.game.countdown) {
                 room.game.countdown = false;
@@ -94,7 +99,31 @@ exports.initConnection = function(socket) {
         // }
         socket.emit('setName', data);
         refreshNames();
+    });
 
+    socket.on('attak', function(data) {
+        var roomName = socket.room,
+            room = io.sockets.adapter.rooms[roomName],
+            users = getUsersInRoom(socket.room),
+            players = _.filter(users, 'isPlayer');
+
+        if (room.game.step != 'attack') {
+            console.log('it\'s not attack');
+            return;
+        }
+
+        if (socket.id != room.game.prevPlayer) {
+            console.log('this player not previous');
+            return;asd
+        }
+
+        if (_.some(socket.cards, data.card)) {
+            _.remove(socket.cards, data.card);
+            room.game.currentCards = room.game.currentCards || [];
+            var cardPair = {};
+            cardPair.attack = data.card;
+            room.game.currentCards.push(cardPair);
+        }
     });
 
     var afterCountdown = function(roomName) {
@@ -107,6 +136,7 @@ exports.initConnection = function(socket) {
             players.length != readyPlayers.length
         )
         {
+            console.log('nothing to do');
             console.log('countdown');
             console.log(room.game.countdown);
             console.log('gamestarted');
@@ -128,6 +158,7 @@ exports.initConnection = function(socket) {
         room.game.trump = deck[0];
         room.game.currentPlayer = startPlayerId;
         room.game.prevPlayer = prevPlayerId;
+        room.game.step = 'attack';
         players.forEach(function(p, i, players) {
             players[i].cards = [];
         });
@@ -183,18 +214,19 @@ exports.initConnection = function(socket) {
             });
         });
 
-        var currentIndex = cards.length, temporaryValue, randomIndex;
+        cards = _.shuffle(cards);
+        // var currentIndex = cards.length, temporaryValue, randomIndex;
 
-        // While there remain elements to shuffle...
-        while (0 !== currentIndex) {
-            // Pick a remaining element...
-            randomIndex = Math.floor(Math.random() * currentIndex);
-            currentIndex -= 1;
-            // And swap it with the current element.
-            temporaryValue = cards[currentIndex];
-            cards[currentIndex] = cards[randomIndex];
-            cards[randomIndex] = temporaryValue;
-        }
+        // // While there remain elements to shuffle...
+        // while (0 !== currentIndex) {
+        //     // Pick a remaining element...
+        //     randomIndex = Math.floor(Math.random() * currentIndex);
+        //     currentIndex -= 1;
+        //     // And swap it with the current element.
+        //     temporaryValue = cards[currentIndex];
+        //     cards[currentIndex] = cards[randomIndex];
+        //     cards[randomIndex] = temporaryValue;
+        // }
         return cards;
     };
 };
