@@ -1,4 +1,4 @@
-var IO;
+var IO, app;
 
 document.addEventListener("DOMContentLoaded", function() {
     'use strict';
@@ -33,6 +33,10 @@ document.addEventListener("DOMContentLoaded", function() {
             $('input[name="ready"').on('click', function(e) {
                 console.log(this.checked);
                 IO.socket.emit('ready', this.checked);
+            });
+
+            $('#end-game').on('click', function(e) {
+                IO.socket.emit('endGameTest');
             });
         },
 
@@ -81,6 +85,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         onSetCards: function(data) {
             console.log(data);
+            app.setCards(data.cards);
         },
 //============================ END ON ==============================\\
 
@@ -95,9 +100,41 @@ document.addEventListener("DOMContentLoaded", function() {
         setName: function() {
             var name = document.getElementById('name').value || 'Guest';
             IO.socket.emit('setName', name);
+        },
+
+        attack: function(card) {
+            IO.socket.emit('attack', {card: card});
         }
 //============================ END EMIT ==============================\\
     };
 
+    app = {
+        cards: [],
+
+        init: function() {
+            $(document).on('click', '.card', function(e) {
+                var cardId = $(this).data('id');
+                var card = app.cards[cardId];
+                console.log('attack with card');
+                console.log(card);
+                IO.attack(card);
+                $(this).remove();
+            });
+        },
+
+        setCards: function(cards) {
+            app.cards = cards;
+            var $cp = $('.control-panel');
+            cards.forEach(function(card, i) {
+                var id = 'data-id="' + i + '"';
+                $('<div class="card" ' + id + '">')
+                    .html(card.name + ' ' + card.suit)
+                    .appendTo($cp);
+            });
+            // draw here div with
+        }
+    };
+
     IO.init();
+    app.init();
 });

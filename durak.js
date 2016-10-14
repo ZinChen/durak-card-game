@@ -65,7 +65,7 @@ exports.initConnection = function(socket) {
 
         if (players.length == readyPlayers.length) {
             console.log('countdown started!');
-            room.game.countdownTime = 10;
+            room.game.countdownTime = 5;
             room.game.countdown = true;
 
             io.to(roomName).emit('countdownStarted', {
@@ -101,7 +101,13 @@ exports.initConnection = function(socket) {
         refreshNames();
     });
 
-    socket.on('attak', function(data) {
+    socket.on('endGameTest', function(data) {
+        var roomName = socket.room,
+            room = io.sockets.adapter.rooms[roomName];
+        room.game.gamestarted = false;
+    });
+
+    socket.on('attack', function(data) {
         var roomName = socket.room,
             room = io.sockets.adapter.rooms[roomName],
             users = getUsersInRoom(socket.room),
@@ -114,8 +120,11 @@ exports.initConnection = function(socket) {
 
         if (socket.id != room.game.prevPlayer) {
             console.log('this player not previous');
-            return;asd
+            return;
         }
+
+        console.log(socket.cards);
+        console.log(data.card);
 
         if (_.some(socket.cards, data.card)) {
             _.remove(socket.cards, data.card);
@@ -124,6 +133,7 @@ exports.initConnection = function(socket) {
             cardPair.attack = data.card;
             room.game.currentCards.push(cardPair);
         }
+        console.log(socket.cards);
     });
 
     var afterCountdown = function(roomName) {
@@ -179,7 +189,7 @@ exports.initConnection = function(socket) {
                 cards: player.cards
             });
         });
-    }
+    };
 
     var refreshNames = function() {
         var userIds = io.sockets.adapter.rooms[socket.room].sockets;
