@@ -20,6 +20,7 @@ document.addEventListener("DOMContentLoaded", function() {
             IO.socket.on('countdownCanceled', IO.onCountdownCanceled);
             IO.socket.on('setCards', IO.onSetCards);
             IO.socket.on('gameStarted', IO.onGameStarted);
+            IO.socket.on('bcAttack', IO.onBcAttack);
 
             document.getElementsByClassName('send-message')[0].addEventListener('click', function(e) {
                 IO.sendMessage();
@@ -85,8 +86,15 @@ document.addEventListener("DOMContentLoaded", function() {
 
         onSetCards: function(data) {
             console.log(data);
+            $('.card').remove();
             app.setCards(data.cards);
         },
+
+        onBcAttack: function(data) {
+            console.log('someone attacked!');
+            console.log(data);
+        },
+
 //============================ END ON ==============================\\
 
 
@@ -118,7 +126,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 console.log('attack with card');
                 console.log(card);
                 IO.attack(card);
-                $(this).remove();
+                // $(this).remove();
             });
         },
 

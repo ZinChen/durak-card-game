@@ -41,7 +41,7 @@ exports.initConnection = function(socket) {
         socket.ready = false;
 
         users = getUsersInRoom(socket.room);
-        room = io.sockets.adapter.rooms[socket.room],
+        room = io.sockets.adapter.rooms[socket.room];
         room.game = [];
 
         var players = _.filter(users, 'isPlayer');
@@ -122,8 +122,6 @@ exports.initConnection = function(socket) {
             console.log('this player not previous');
             return;
         }
-
-        console.log(socket.cards);
         console.log(data.card);
 
         if (_.some(socket.cards, data.card)) {
@@ -132,8 +130,14 @@ exports.initConnection = function(socket) {
             var cardPair = {};
             cardPair.attack = data.card;
             room.game.currentCards.push(cardPair);
+
+            socket.emit('setCards', {cards: socket.cards});
+            socket.broadcast.to(socket.room).emit('bcAttack', {
+                player: socket.id,
+                card: data.card,
+                cardsLeft: socket.cards.length
+            });
         }
-        console.log(socket.cards);
     });
 
     var afterCountdown = function(roomName) {
