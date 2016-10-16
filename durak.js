@@ -24,7 +24,11 @@ exports.initConnection = function(socket) {
     socket.emit('connected', {message: "You are connected!"});
     socket.on('message', function(data) {
         try {
-            socket.emit('message', data);
+            var selfData = {
+                message: data.message,
+                self: true
+            };
+            socket.emit('message', selfData);
             socket.broadcast.to(socket.room).emit('message', data);
         } catch (e) {
             console.log(e);

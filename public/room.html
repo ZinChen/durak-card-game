@@ -8,9 +8,11 @@
         var room = "<%- room -%>";
     </script>
     <script src="/vendor/jquery-3.1.1.min.js"></script>
-    <script src="/app.js"></script>
+    <script src="/vendor/jquery.autoresize.min.js"></script>
+    <script src="/scripts/app.js"></script>
+    <script src="/scripts/client.js"></script>
     <link href="https://fonts.googleapis.com/css?family=Righteous" rel="stylesheet">
-    <link href="/style.css" rel="stylesheet">
+    <link href="/styles/style.css" rel="stylesheet">
 </head>
 <body>
     room is <%- room -%>
@@ -20,8 +22,6 @@
         <label> Your name is <span id="name-input"></span></label>
         <br>
         <label for="message-text"> Enter message </label> <br>
-        <textarea name="" id="message-text" cols="30" rows="10" class="message-text"></textarea>
-        <button class="send-message">Send message</button>
     </div>
     <input type="checkbox" name="ready">
     <br>
@@ -32,11 +32,20 @@
         <ul class="users"></ul>
     </div>
 
+    <div class="chat-container">
+        <div class="chat-box"></div>
+        <div class="chat-msg">
+            <textarea name="" id="message-text" class="message-text"></textarea>
+            <button style="display: none;" class="send-message">Send message</button>
+        </div>
+    </div>
+
+
     <div id="layout-name">
         <div id="frame">
             <div id="frame2">
-                <h3>Please, input your name:</h3>
-                <input id="name" type="text"><button id="btn-name">Go in</button><button id="test">+</button>
+                <h3>Please, enter your name:</h3>
+                <input id="name" type="text"><button id="btn-name">Go in</button>
             </div>
         </div>
     </div>

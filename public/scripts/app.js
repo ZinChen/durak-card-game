@@ -28,9 +28,6 @@ document.addEventListener("DOMContentLoaded", function() {
             document.getElementById('btn-name').addEventListener('click', function(e) {
                 IO.setName();
             });
-            document.getElementById('test').addEventListener('click', function(e) {
-                IO.socket.emit('test', {});
-            });
             $('input[name="ready"').on('click', function(e) {
                 console.log(this.checked);
                 IO.socket.emit('ready', this.checked);
@@ -49,8 +46,23 @@ document.addEventListener("DOMContentLoaded", function() {
         },
 
         onMessage: function(data) {
-            console.log(data.name);
-            console.log(data.message);
+            var cssClass = '';
+            if (data.self) {
+                data.name = IO.socket.data.myName;
+                cssClass = 'self';
+            }
+
+            var $chat = $('.chat-box'),
+                elName = $('<div class="msg-autor">' + data.name + '</div>'),
+                elText = $('<div class="msg-text">' + data.message + '</div>'),
+                elMsg = $('<div class="msg ' + cssClass + ' msg-animate"></div>').append(elName).append(elText);
+            
+            $chat.append(elMsg);
+            setTimeout(function() {
+                elMsg.removeClass('msg-animate');
+            }, 100);
+            var scrollHeight = $chat.get(0).scrollHeight;
+            $chat.scrollTop(scrollHeight);
         },
 
         onSetName: function(data) {
@@ -101,7 +113,7 @@ document.addEventListener("DOMContentLoaded", function() {
 //============================ EMIT ==============================\\
         sendMessage: function() {
             var name = IO.socket.data.myName || 'Guest';
-            var message = document.getElementsByClassName('message-text')[0].value || 'message';
+            var message = document.getElementsByClassName('message-text')[0].value;
             IO.socket.emit('message', {message: message, name: name});
         },
 

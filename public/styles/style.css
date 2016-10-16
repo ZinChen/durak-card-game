@@ -1,0 +1,121 @@
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-button {  display: none; }
+::-webkit-scrollbar-track {  background-color: #000;}
+::-webkit-scrollbar-track-piece { background-color: #a1a1a1;}
+::-webkit-scrollbar-thumb { height: 40px; background-color: #666; border-radius: 3px;}
+::-webkit-scrollbar-corner { background-color: #000;}}
+::-webkit-resizer { background-color: #666;}
+
+body {
+    font-family: 'Righteous', cursive;
+}
+#layout-name {
+    background-color: rgba(0, 0, 0, .99);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 2;
+    color: rgba(255,255,255,.8);
+}
+#frame, #frame2 {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+#frame {
+    width: 40vw;
+    height: 60vh;
+    margin: auto;
+}
+#frame2 {
+    margin: 15% 10%;
+}
+#frame h3 {
+    font-size: 200%;
+    margin: 0;
+    padding: 0;
+}
+#users {
+    display: inline-block;
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin-right: 20px;
+}
+.users {
+    list-style-type: none;
+    padding: 0 5px;
+    margin-top: 5px;
+    border: solid black;
+}
+
+.chat-container {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 450px;
+    height: 280px;
+    margin-right: 20px;
+}
+
+.chat-box {
+    width: 100%;
+    height: 70%;
+    border: thin solid #a9a9a9;
+    box-sizing: border-box;
+    font-size: 80%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    direction: rtl;
+} 
+
+
+.msg {
+	padding: 5px;
+    text-align: right;
+    background-color: #b4c9ee;
+    border-top: thin solid rgba(99, 99, 99, 0.5);
+    transition: all ease-out .2s;
+}
+
+.msg:first-child {
+    border-top: none;
+}
+
+.msg.msg-animate {
+    transform: translateX(-100%);
+}
+
+.msg.self.msg-animate {
+    transform: translateX(100%);
+}
+
+.msg.self {
+    text-align: left;
+	background-color: #cdeb92;
+}
+
+.msg .msg-autor {
+	font-size: 80%;
+    font-style: italic;
+}
+
+.chat-msg {
+	width: 100%;
+	height: 30%;
+}
+
+.message-text {
+	width: 100%;
+    padding: 5px;
+    height: 30px;
+    font-size: 15px;
+    box-sizing: border-box;
+    resize: none;
+    max-height: 95%;
+    overflow-y: auto;
+}
